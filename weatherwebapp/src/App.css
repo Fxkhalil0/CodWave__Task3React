@@ -249,7 +249,7 @@ nav>button {
 .weather__list.open {
   display: block;
   z-index: 999;
-  right: 25px;
+  right: 28px;
 }
 
 .degree__list {
@@ -260,7 +260,7 @@ nav>button {
 
 .degree__list.open {
   display: block;
-  right: 204px;
+  right: 262px;
   z-index: 999;
 }
 
@@ -271,7 +271,7 @@ nav>button {
 
 .type__list.open {
   display: block;
-  left: 160px;
+  left: 141px;
   z-index: 999;
 }
 

@@ -6,7 +6,6 @@ import Image2 from './assets/images/Group 2.png'
 import Image3 from './assets/images/Group 3.png'
 import Image4 from './assets/images/Group 4.png'
 import Image5 from './assets/images/Group 5.png'
-import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { useStateContext } from './Context/UseContext'
 
@@ -18,9 +17,9 @@ function App() {
   const [weatherListOpen, setWeatherListOpen] = useState(false)
   const [marginTop, setMarginTop] = useState(140); // Initial margin-top
   const [searchInput, setSearchInput] = useState('');
-  const [selectedType, setSelectedType] = useState('Coldest');
-  const [selectedDegree, setSelectedDegree] = useState('10ºC - 20ºC');
-  const [selectedWeather, setSelectedWeather] = useState('Rainy');
+  const [selectedType, setSelectedType] = useState('Select Type');
+  const [selectedDegree, setSelectedDegree] = useState('Select Degree');
+  const [selectedWeather, setSelectedWeather] = useState('Select Weather');
 
   const { weather, thisLocation, values, place, setPlace } = useStateContext()
 
@@ -74,7 +73,7 @@ function App() {
       } else if (window.innerWidth = 567) {
         setMarginTop(160);
       }
-    } else if(!typeListOpen || !degreeListOpen || !weatherListOpen) {
+    } else if (!typeListOpen || !degreeListOpen || !weatherListOpen) {
       if (window.innerWidth > 1200) {
         setMarginTop(140);
       } else if (window.innerWidth = 1200) {
@@ -94,7 +93,50 @@ function App() {
     setSearchInput('')
   };
 
-  
+  const handleTypeSelect = (type) => {
+    setSelectedType(type);
+  };
+
+  const handleDegreeSelect = (degree) => {
+    setSelectedDegree(degree);
+  };
+
+  const handleWeatherSelect = (weather) => {
+    setSelectedWeather(weather);
+  };
+
+  const filteredValues = values.filter((day) => {
+    // Check if no filters are selected, and in that case, show all data
+    if (
+      selectedType === 'Select Type' &&
+      selectedDegree === 'Select Degree' &&
+      selectedWeather === 'Select Weather'
+    ) {
+      return true;
+    }
+
+    // If not all filters are selected, check each filter condition individually
+    const typeCondition =
+      selectedType === 'Select Type' || // If "Select Type" is selected, always true
+      (selectedType === 'Coldest' && day.temp === Math.min(...values.map((d) => d.temp))) ||
+      (selectedType === 'Hottest' && day.temp === Math.max(...values.map((d) => d.temp)));
+
+    const degreeCondition =
+      selectedDegree === 'Select Degree' || // If "Select Degree" is selected, always true
+      ((selectedDegree === '10ºC - 20ºC' && day.temp >= 10 && day.temp <= 20) ||
+        // Add similar conditions for other degree ranges
+        (selectedDegree === '31ºC - 40ºC' && day.temp >= 31 && day.temp <= 40));
+
+    const weatherCondition =
+      selectedWeather === 'Select Weather' || // If "Select Weather" is selected, always true
+      (selectedWeather &&
+        day.conditions.includes(selectedWeather));
+
+    return typeCondition && degreeCondition && weatherCondition;
+
+    return false;
+  });
+
 
   return (
     <section className="weather__app__section">
@@ -155,47 +197,50 @@ function App() {
           <div className="filter">
             <h3>Filters</h3>
             <div className="type" onClick={toggleTypeList}>
-              <p>Coldest</p>
+              <p>{selectedType}</p>
               <i className="fa-solid fa-chevron-down" style={{ color: '#fff' }} />
             </div>
             <ul className={`type__list ${typeListOpen ? 'open' : ''}`}>
-              <li>Coldest</li>
-              <li>Hotest</li>
+              <li onClick={() => handleTypeSelect('Select Type')}>Select Type</li>
+              <li onClick={() => handleTypeSelect('Coldest')}>Coldest</li>
+              <li onClick={() => handleTypeSelect('Hottest')}>Hottest</li>
             </ul>
             <div className="degree" onClick={toggleDegreeList}>
-              <p>10ºC - 20ºC</p>
+              <p>{selectedDegree}</p>
               <i className="fa-solid fa-chevron-down" style={{ color: '#fff' }} />
             </div>
             <ul className={`degree__list ${degreeListOpen ? 'open' : ''}`}>
-              <li>10ºC - 20ºC</li>
-              <li>21ºC - 30ºC</li>
-              <li>31ºC - 40ºC</li>
+              <li onClick={() => handleDegreeSelect('Select Degree')}>Select Degree</li>
+              <li onClick={() => handleDegreeSelect('10ºC - 20ºC')}>10ºC - 20ºC</li>
+              <li onClick={() => handleDegreeSelect('21ºC - 30ºC')}>21ºC - 30ºC</li>
+              <li onClick={() => handleDegreeSelect('31ºC - 40ºC')}>31ºC - 40ºC</li>
             </ul>
             <div className="weather" onClick={toggleWeatherList}>
-              <p>Rainy</p>
+              <p>{selectedWeather}</p>
               <i className="fa-solid fa-chevron-down" style={{ color: '#fff' }} />
             </div>
             <ul className={`weather__list ${weatherListOpen ? 'open' : ''}`}>
-              <li>Rainy</li>
-              <li>Cloudy</li>
-              <li>Sunny</li>
+              <li onClick={() => handleWeatherSelect('Select Weather')}>Select Weather</li>
+              <li onClick={() => handleWeatherSelect('Rainy')}>Rainy</li>
+              <li onClick={() => handleWeatherSelect('Partially cloudy')}>Partially Cloudy</li>
+              <li onClick={() => handleWeatherSelect('Clear')}>Clear</li>
             </ul>
           </div>
         </div>
         <div className="weather__cards" style={{ marginTop: `${marginTop}px` }}>
-        {values.slice(0, 7).map((day, index) => (
-        <Card
-          key={index}
-          place={thisLocation}
-          date={day.datetimeStr}
-          windspeed={day.wspd}
-          humidity={day.humidity}
-          temperature={day.temp}
-          heatIndex={day.heatindex}
-          iconString={day.conditions}
-          conditions={day.conditions}
-        />
-      ))}
+          {filteredValues.slice(0, 7).map((day, index) => (
+            <Card
+              key={index}
+              place={thisLocation}
+              date={day.datetimeStr}
+              windspeed={day.wspd}
+              humidity={day.humidity}
+              temperature={day.temp}
+              heatIndex={day.heatindex}
+              iconString={day.conditions}
+              conditions={day.conditions}
+            />
+          ))}
         </div>
       </div>
       <figure className="left__line__bottom">
