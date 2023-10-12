@@ -17,9 +17,9 @@ function App() {
   const [weatherListOpen, setWeatherListOpen] = useState(false)
   const [marginTop, setMarginTop] = useState(140); // Initial margin-top
   const [searchInput, setSearchInput] = useState('');
-  const [selectedType, setSelectedType] = useState('Select Type');
-  const [selectedDegree, setSelectedDegree] = useState('Select Degree');
-  const [selectedWeather, setSelectedWeather] = useState('Select Weather');
+  const [selectedType, setSelectedType] = useState('Type');
+  const [selectedDegree, setSelectedDegree] = useState('Degree');
+  const [selectedWeather, setSelectedWeather] = useState('Weather');
 
   const { weather, thisLocation, values, place, setPlace } = useStateContext()
 
@@ -108,27 +108,27 @@ function App() {
   const filteredValues = values.filter((day) => {
     // Check if no filters are selected, and in that case, show all data
     if (
-      selectedType === 'Select Type' &&
-      selectedDegree === 'Select Degree' &&
-      selectedWeather === 'Select Weather'
+      selectedType === 'Type' &&
+      selectedDegree === 'Degree' &&
+      selectedWeather === 'Weather'
     ) {
       return true;
     }
 
     // If not all filters are selected, check each filter condition individually
     const typeCondition =
-      selectedType === 'Select Type' || // If "Select Type" is selected, always true
+      selectedType === 'Type' || // If "Select Type" is selected, always true
       (selectedType === 'Coldest' && day.temp === Math.min(...values.map((d) => d.temp))) ||
       (selectedType === 'Hottest' && day.temp === Math.max(...values.map((d) => d.temp)));
 
     const degreeCondition =
-      selectedDegree === 'Select Degree' || // If "Select Degree" is selected, always true
+      selectedDegree === 'Degree' || // If "Select Degree" is selected, always true
       ((selectedDegree === '10ºC - 20ºC' && day.temp >= 10 && day.temp <= 20) ||
         // Add similar conditions for other degree ranges
         (selectedDegree === '31ºC - 40ºC' && day.temp >= 31 && day.temp <= 40));
 
     const weatherCondition =
-      selectedWeather === 'Select Weather' || // If "Select Weather" is selected, always true
+      selectedWeather === 'Weather' || // If "Select Weather" is selected, always true
       (selectedWeather &&
         day.conditions.includes(selectedWeather));
 
@@ -201,7 +201,7 @@ function App() {
               <i className="fa-solid fa-chevron-down" style={{ color: '#fff' }} />
             </div>
             <ul className={`type__list ${typeListOpen ? 'open' : ''}`}>
-              <li onClick={() => handleTypeSelect('Select Type')}>Select Type</li>
+              <li onClick={() => handleTypeSelect('Type')}>Type</li>
               <li onClick={() => handleTypeSelect('Coldest')}>Coldest</li>
               <li onClick={() => handleTypeSelect('Hottest')}>Hottest</li>
             </ul>
@@ -210,7 +210,7 @@ function App() {
               <i className="fa-solid fa-chevron-down" style={{ color: '#fff' }} />
             </div>
             <ul className={`degree__list ${degreeListOpen ? 'open' : ''}`}>
-              <li onClick={() => handleDegreeSelect('Select Degree')}>Select Degree</li>
+              <li onClick={() => handleDegreeSelect('Degree')}>Degree</li>
               <li onClick={() => handleDegreeSelect('10ºC - 20ºC')}>10ºC - 20ºC</li>
               <li onClick={() => handleDegreeSelect('21ºC - 30ºC')}>21ºC - 30ºC</li>
               <li onClick={() => handleDegreeSelect('31ºC - 40ºC')}>31ºC - 40ºC</li>
@@ -220,7 +220,7 @@ function App() {
               <i className="fa-solid fa-chevron-down" style={{ color: '#fff' }} />
             </div>
             <ul className={`weather__list ${weatherListOpen ? 'open' : ''}`}>
-              <li onClick={() => handleWeatherSelect('Select Weather')}>Select Weather</li>
+              <li onClick={() => handleWeatherSelect('Weather')}>Weather</li>
               <li onClick={() => handleWeatherSelect('Rainy')}>Rainy</li>
               <li onClick={() => handleWeatherSelect('Partially cloudy')}>Partially Cloudy</li>
               <li onClick={() => handleWeatherSelect('Clear')}>Clear</li>
